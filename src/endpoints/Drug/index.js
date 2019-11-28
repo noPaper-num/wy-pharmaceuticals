@@ -9,13 +9,16 @@ const updateDrug = require('./updateDrug');
 const getDrugs = require('./getDrugs');
 const getDrug = require('./getDrug');
 
-DrugRouter.use([], jwt({ secret: 'salut' }));
+DrugRouter.use(
+  ['/addDrug', '/getDrugs', 'deleteDrug', 'updateDrug'],
+  jwt({ secret: 'salut' }),
+);
 
 DrugRouter.post('/addDrug', async (req, res) => {
   if (
-    !req.user ||
-    !req.user.objectAccount ||
-    !req.user.objectAccount.roles.include('admin')
+    !req.headers ||
+    !req.headers.objectAccount ||
+    !req.headers.objectAccount.roles.include('admin')
   ) {
     throw httpErrors.Unauthorized();
   }
@@ -38,10 +41,11 @@ DrugRouter.get('/getDrugs', async (req, res) => {
 });
 
 DrugRouter.delete('/deleteDrug/:id', async (req, res) => {
+  console.log(req.headers);
   if (
-    !req.user ||
-    !req.user.objectAccount.roles ||
-    !req.user.objectAccount.roles.include('admin')
+    !req.headers ||
+    !req.headers.objectAccount.roles ||
+    !req.headers.objectAccount.roles.include('admin')
   ) {
     throw httpErrors.Unauthorized();
   }
@@ -52,9 +56,9 @@ DrugRouter.delete('/deleteDrug/:id', async (req, res) => {
 
 DrugRouter.patch('/updateDrug/:id', async (req, res) => {
   if (
-    !req.user ||
-    !req.user.objectAccount.roles ||
-    !req.user.objectAccount.roles.include('admin')
+    !req.headers ||
+    !req.headers.objectAccount.roles ||
+    !req.headers.objectAccount.roles.include('admin')
   ) {
     throw httpErrors.Unauthorized();
   }
